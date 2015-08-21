@@ -1,0 +1,46 @@
+--- configure.orig	2014-04-10 12:37:08.000000000 -0600
++++ configure	2014-08-20 12:23:02.000000000 -0600
+@@ -918,7 +918,7 @@
+ CFG_RUNTIME_SYSTEM=
+ CFG_ALSA=auto
+ CFG_PULSEAUDIO=auto
+-CFG_COREWLAN=auto
++CFG_COREWLAN=no
+ CFG_ICD=auto
+ CFG_NOPROCESS=no
+ CFG_ICU=auto
+@@ -5009,8 +5009,8 @@
+                 # Avoid overriding the default configuration settings when building with clang/libc++
+                 ;;
+             *)
+-                # For all other configurations require a minimum of 10.5
+-                echo "export MACOSX_DEPLOYMENT_TARGET = 10.5" >> "$mkfile"
++                # For all other configurations require a minimum of 10.6
++                echo "export MACOSX_DEPLOYMENT_TARGET = 10.6" >> "$mkfile"
+                 ;;
+             esac
+ 
+@@ -7225,7 +7225,7 @@
+     ;;
+ macx*,yes)
+     # Cocoa
+-    QMakeVar set QMAKE_MACOSX_DEPLOYMENT_TARGET 10.5
++    QMakeVar set QMAKE_MACOSX_DEPLOYMENT_TARGET 10.6
+     ;;
+ macx*,no)
+     # gcc, Carbon
+@@ -7993,10 +7993,10 @@
+             QMakeVar add QMAKE_OBJECTIVE_CFLAGS_PPC "-arch ppc -Xarch_ppc -mmacosx-version-min=10.4"
+         fi
+         if echo "$CFG_MAC_ARCHS" | grep '\<x86_64\>' > /dev/null 2>&1; then
+-            QMakeVar add QMAKE_CFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.5"
+-            QMakeVar add QMAKE_CXXFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.5"
+-            QMakeVar add QMAKE_LFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.5"
+-            QMakeVar add QMAKE_OBJECTIVE_CFLAGS_X86_64 "-arch x86_64 -Xarch_x86_64 -mmacosx-version-min=10.5"
++            QMakeVar add QMAKE_CFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.6"
++            QMakeVar add QMAKE_CXXFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.6"
++            QMakeVar add QMAKE_LFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.6"
++            QMakeVar add QMAKE_OBJECTIVE_CFLAGS_X86_64 "-arch x86_64 -Xarch_x86_64 -mmacosx-version-min=10.6"
+         fi
+         if echo "$CFG_MAC_ARCHS" | grep '\<ppc64\>' > /dev/null 2>&1; then
+             QMakeVar add QMAKE_CFLAGS "-Xarch_ppc64 -mmacosx-version-min=10.5"

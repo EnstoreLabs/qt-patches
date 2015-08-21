@@ -1,0 +1,70 @@
+diff -Naur qt-everywhere-opensource-src-4.8.6.old/qmake/generators/unix/unixmake.cpp qt-everywhere-opensource-src-4.8.6/qmake/generators/unix/unixmake.cpp
+--- qt-everywhere-opensource-src-4.8.6.old/qmake/generators/unix/unixmake.cpp   2014-12-19 09:19:40.000000000 -0600
++++ qt-everywhere-opensource-src-4.8.6/qmake/generators/unix/unixmake.cpp       2014-12-19 09:23:36.000000000 -0600
+@@ -907,6 +907,17 @@
+                 }
+             }
+         }
++
++        if (!project->isEmpty("QMAKE_BUNDLE")) {
++            QString plain_targ = filePrefixRoot(root, fileFixify(targetdir + target, FileFixifyAbsolute));
++            QStringList frameworkLinks;
++            frameworkLinks << "/Headers" << "/Resources";
++            for (int i = 0; i < frameworkLinks.size(); ++i) {
++                QString dest = plain_targ + frameworkLinks[i];
++                ret += "\n\t-$(DEL_FILE) " + dest + "\n\t"
++                        + varGlue("QMAKE_LN_SHLIB", "-", " ", " Versions/Current" + frameworkLinks[i] + " " + dest);
++            }
++        }
+     }
+     return ret;
+ }
+diff -Naur qt-everywhere-opensource-src-4.8.6.old/qmake/generators/unix/unixmake2.cpp qt-everywhere-opensource-src-4.8.6/qmake/generators/unix/unixmake2.cpp
+--- qt-everywhere-opensource-src-4.8.6.old/qmake/generators/unix/unixmake2.cpp  2014-12-19 09:19:40.000000000 -0600
++++ qt-everywhere-opensource-src-4.8.6/qmake/generators/unix/unixmake2.cpp      2014-12-19 09:27:04.000000000 -0600
+@@ -544,18 +544,26 @@
+                 t << "\n\t" << var("QMAKE_POST_LINK");
+             t << endl << endl;
+         } else if(!project->isEmpty("QMAKE_BUNDLE")) {
++            QString currentLink = destdir + "Versions/Current";
+             t << "\n\t"
+               << "-$(DEL_FILE) $(TARGET) $(TARGET0) $(DESTDIR)$(TARGET0)" << "\n\t"
+               << var("QMAKE_LINK_SHLIB_CMD") << "\n\t"
+               << mkdir_p_asstring("\"`dirname $(DESTDIR)$(TARGETD)`\"", false) << "\n\t"
+               << "-$(MOVE) $(TARGET) $(DESTDIR)$(TARGETD)" << "\n\t"
+               << mkdir_p_asstring("\"`dirname $(DESTDIR)$(TARGET0)`\"", false) << "\n\t"
+-              << varGlue("QMAKE_LN_SHLIB","-"," "," Versions/" +
+-                         project->first("QMAKE_FRAMEWORK_VERSION") +
+-                         "/$(TARGET) $(DESTDIR)$(TARGET0)") << "\n\t"
+-              << "-$(DEL_FILE) " << destdir << "Versions/Current" << "\n\t"
++              << "-$(DEL_FILE) " << currentLink << "\n\t"
+               << varGlue("QMAKE_LN_SHLIB","-"," ", " " + project->first("QMAKE_FRAMEWORK_VERSION") +
+-                         " " + destdir + "Versions/Current") << "\n\t";
++                             " " + currentLink) << "\n\t"
++              << "-$(DEL_FILE) $(DESTDIR)$(TARGET0) \n\t"
++              << varGlue("QMAKE_LN_SHLIB", "-", " ",
++                         " Versions/Current/$(TARGET) $(DESTDIR)$(TARGET0)") << "\n\t"
++              << "-$(DEL_FILE) `dirname $(DESTDIR)$(TARGET0)`/Resources \n\t"
++              << varGlue("QMAKE_LN_SHLIB", "-", " ",
++                         " Versions/Current/Resources `dirname $(DESTDIR)$(TARGET0)`/Resources") << "\n\t"
++              << "-$(DEL_FILE) `dirname $(DESTDIR)$(TARGET0)`/Headers \n\t"
++              << varGlue("QMAKE_LN_SHLIB", "-", " ",
++                         " Versions/Current/Headers `dirname $(DESTDIR)$(TARGET0)`/Headers") << "\n\t";
++
+             if(!project->isEmpty("QMAKE_POST_LINK"))
+                 t << "\n\t" << var("QMAKE_POST_LINK");
+             t << endl << endl;
+@@ -1233,9 +1241,12 @@
+         if(exists(Option::fixPathToLocalOS(plist))) {
+             if(project->isEmpty("QMAKE_INFO_PLIST"))
+                 project->values("QMAKE_INFO_PLIST").append(plist);
++            qDebug() << "bundle" << project->first("TEMPLATE");
++            QString plistPath = project->first("TEMPLATE") == "app" ?
++                     "/Contents/Info.plist" : "/Versions/" + project->first("QMAKE_FRAMEWORK_VERSION") + "/Resources/Info.plist";
+             project->values("QMAKE_INFO_PLIST_OUT").append(project->first("DESTDIR") +
+                                                                 project->first("QMAKE_BUNDLE") +
+-                                                                "/Contents/Info.plist");
++                                                                plistPath);
+             project->values("ALL_DEPS") += project->first("QMAKE_INFO_PLIST_OUT");
+             if(!project->isEmpty("ICON") && project->first("TEMPLATE") == "app")
+                 project->values("ALL_DEPS") += project->first("DESTDIR") +

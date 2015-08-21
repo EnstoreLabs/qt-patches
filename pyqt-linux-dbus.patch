@@ -1,0 +1,12 @@
+Only needed for pre 1.0 dbus (Ubuntu Edgy).
+
+--- dbus/helper.h.orig	2007-10-02 13:03:42.000000000 -0500
++++ dbus/helper.h	2007-10-02 13:02:58.000000000 -0500
+@@ -20,6 +20,7 @@
+ // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
+ 
++#define DBUS_API_SUBJECT_TO_CHANGE
+ #include <QHash>
+ #include <QMultiHash>
+ #include <QObject>

@@ -1,0 +1,48 @@
+--- fusion.pro.old	2015-03-31 11:52:44.000000000 -0300
++++ fusion.pro	2015-03-31 11:58:00.000000000 -0300
+@@ -7,9 +7,13 @@
+ CONFIG += plugin
+ 
+ # Set this variable to Qt sources directory
+-QTSRC = E:/Soft/QtSDK/QtSources/4.8.0/src
++QTSRC = ../qt-everywhere-opensource-src-4.8.6/src
+ 
+-INCLUDEPATH += $$QTSRC/gui/styles
++INCLUDEPATH += $$QTSRC/gui/styles \
++               $$QTSRC/../include/QtCore/ \
++               $$QTSRC/../include/QtGui/ \
++               $$QTSRC/../include/ \
++               $$QTSRC/../
+ 
+ TARGET = $$qtLibraryTarget($$TARGET)
+ DESTDIR = $$[QT_INSTALL_PLUGINS]/styles
+@@ -26,28 +30,8 @@
+     qfusionstylepixmaps_p.h \
+     qstyleanimation_p.h \
+     fusionstyleplugin.h
+-	
++
+ RESOURCES += \
+     fusion.qrc
+ 
+ win32: LIBS += -lgdi32
+-
+-unix:!symbian {
+-    maemo5 {
+-        target.path = /opt/usr/lib
+-    } else {
+-        target.path = /usr/lib
+-    }
+-    INSTALLS += target
+-}
+-
+-symbian {
+-    load(data_caging_paths)
+-    MMP_RULES += EXPORTUNFROZEN
+-    TARGET.UID3 = 0xE31FC764
+-    TARGET.CAPABILITY = 
+-    TARGET.EPOCALLOWDLLDATA = 1
+-    pluginDeploy.sources = fusion.dll
+-    pluginDeploy.path = $$QT_PLUGINS_BASE_DIR/fusion
+-    DEPLOYMENT += pluginDeploy
+-}

@@ -1,0 +1,11 @@
+--- src/gui/styles/qstylehelper.cpp.old	2015-03-31 12:53:47.000000000 -0300
++++ src/gui/styles/qstylehelper.cpp	2015-03-31 12:54:27.000000000 -0300
+@@ -92,7 +92,7 @@
+             scale = dpi/96.0;
+         }
+ #elif defined(Q_WS_MAC)
+-    scale = qt_mac_get_scalefactor();
++    //scale = qt_mac_get_scalefactor();
+ #endif
+     }
+     return value * scale;
